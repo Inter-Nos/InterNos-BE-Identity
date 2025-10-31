@@ -1,0 +1,8 @@
+rootProject.name = 'internos-backend'
+
+include 'common'
+include 'service-a-identity'
+
+project(':service-a-identity').projectDir = file('service-a-identity')
+project(':common').projectDir = file('common')
+
