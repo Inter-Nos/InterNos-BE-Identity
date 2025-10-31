@@ -75,9 +75,9 @@ public class DashboardService {
             if (bucketStart.isBefore(since)) {
                 sparkline.add(0);
             } else {
-                long count = visitLogUserRepository.countByOwnerIdAndCreatedAtAfter(userId, bucketStart);
-                // TODO: Count visits between bucketStart and bucketEnd (requires query modification)
-                // For now, return aggregated count
+                // Count visits within the time bucket (bucketStart <= createdAt < bucketEnd)
+                long count = visitLogUserRepository.countByOwnerIdAndCreatedAtBetween(
+                        userId, bucketStart, bucketEnd);
                 sparkline.add((int) count);
             }
         }
