@@ -74,6 +74,18 @@ public class SessionService {
     }
     
     /**
+     * Get current session username from HttpSession
+     */
+    public String getCurrentUsername(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        
+        return (String) session.getAttribute(SESSION_USERNAME_ATTR);
+    }
+    
+    /**
      * Invalidate session
      * Remove from Redis and mark as expired in DB
      */
