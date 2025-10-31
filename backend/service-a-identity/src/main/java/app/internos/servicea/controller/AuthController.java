@@ -120,11 +120,13 @@ public class AuthController {
         // Set CSRF token in cookie
         csrfTokenService.setCsrfTokenInCookie(response, csrfToken);
         
-        // TODO: Get user info from session or DB
-        // For now, return basic info
+        // Get username from session
+        String username = sessionService.getCurrentUsername(request);
+        
+        // Build user info
         SessionResp.UserInfo userInfo = SessionResp.UserInfo.builder()
                 .id(userId)
-                .username("") // TODO: Get from session or DB
+                .username(username != null ? username : "")
                 .build();
         
         return ResponseEntity.ok(SessionResp.builder()
