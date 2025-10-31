@@ -1,5 +1,7 @@
 package app.internos.servicea.service;
 
+import app.internos.common.exception.InvalidCredentialsException;
+import app.internos.common.exception.UsernameAlreadyExistsException;
 import app.internos.servicea.domain.user.AppUser;
 import app.internos.servicea.domain.user.UserRepository;
 import app.internos.servicea.dto.request.LoginReq;
@@ -27,7 +29,7 @@ public class AuthService {
     public AppUser register(RegisterReq request) {
         // Check if username already exists (case-insensitive)
         if (userRepository.existsByUsernameIgnoreCase(request.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new UsernameAlreadyExistsException(request.getUsername());
         }
         
         // Hash password
@@ -53,11 +55,11 @@ public class AuthService {
     public AppUser login(LoginReq request) {
         // Find user by username (case-insensitive)
         AppUser user = userRepository.findByUsernameIgnoreCase(request.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+                .orElseThrow(InvalidCredentialsException::new);
         
         // Verify password
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new InvalidCredentialsException();
         }
         
         log.info("User logged in successfully: {}", user.getUsername());
