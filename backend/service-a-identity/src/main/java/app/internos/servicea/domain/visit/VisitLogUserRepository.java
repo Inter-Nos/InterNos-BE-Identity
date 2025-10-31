@@ -22,5 +22,12 @@ public interface VisitLogUserRepository extends JpaRepository<VisitLogUser, Long
             @Param("ownerId") Long ownerId,
             @Param("since") Instant since
     );
+    
+    @Query("SELECT COUNT(v) FROM VisitLogUser v WHERE v.owner.id = :ownerId AND v.createdAt >= :bucketStart AND v.createdAt < :bucketEnd")
+    long countByOwnerIdAndCreatedAtBetween(
+            @Param("ownerId") Long ownerId,
+            @Param("bucketStart") Instant bucketStart,
+            @Param("bucketEnd") Instant bucketEnd
+    );
 }
 
