@@ -23,6 +23,7 @@ public class SessionService {
     private final IpHashUtil ipHashUtil;
     
     private static final String SESSION_USER_ID_ATTR = "userId";
+    private static final String SESSION_USERNAME_ATTR = "username";
     private static final String SESSION_FINGERPRINT_ATTR = "sessionFingerprint";
     private static final int SESSION_TIMEOUT_SECONDS = 86400; // 24 hours
     
@@ -44,6 +45,7 @@ public class SessionService {
         
         // Store user info in session (Redis)
         session.setAttribute(SESSION_USER_ID_ATTR, user.getId());
+        session.setAttribute(SESSION_USERNAME_ATTR, user.getUsername());
         session.setAttribute(SESSION_FINGERPRINT_ATTR, sessionFingerprint);
         
         // Track session in DB
