@@ -2,7 +2,6 @@ package app.internos.servicea.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,6 @@ import java.util.Map;
 public class HealthController {
     
     private final JdbcTemplate jdbcTemplate;
-    private final RedisConnectionFactory redisConnectionFactory;
     
     /**
      * Liveness probe - check if application is alive
@@ -31,22 +29,20 @@ public class HealthController {
     
     /**
      * Readiness probe - check if application is ready to serve traffic
-     * Checks DB and Redis connections
+     * Checks DB connection
      * Used by K8s Readiness Probe
      */
     @GetMapping("/readiness")
     public ResponseEntity<Map<String, String>> readiness() {
         boolean dbOk = checkDatabase();
-        boolean redisOk = checkRedis();
         
-        if (dbOk && redisOk) {
+        if (dbOk) {
             return ResponseEntity.ok(Map.of("status", "READY"));
         } else {
-            log.warn("Readiness check failed: DB={}, Redis={}", dbOk, redisOk);
+            log.warn("Readiness check failed: DB={}", dbOk);
             return ResponseEntity.status(503)
                     .body(Map.of("status", "NOT_READY", 
-                            "db", dbOk ? "OK" : "FAIL", 
-                            "redis", redisOk ? "OK" : "FAIL"));
+                            "db", "FAIL"));
         }
     }
     
@@ -56,16 +52,6 @@ public class HealthController {
             return true;
         } catch (Exception e) {
             log.error("Database health check failed", e);
-            return false;
-        }
-    }
-    
-    private boolean checkRedis() {
-        try {
-            redisConnectionFactory.getConnection().ping();
-            return true;
-        } catch (Exception e) {
-            log.error("Redis health check failed", e);
             return false;
         }
     }
