@@ -95,57 +95,14 @@ SPRING_PROFILES_ACTIVE=dev
 SERVER_PORT=8080
 ```
 
-## 로컬 개발 환경 설정
+## 빌드 및 실행
 
-### 1. Prerequisites
+### Prerequisites
 
 - Java 17 이상
 - Docker & Docker Compose
-- PostgreSQL 15 (또는 Docker로 실행)
-- Redis (또는 Docker로 실행)
 
-### 2. 데이터베이스 및 Redis 실행
-
-```bash
-cd backend/docker
-docker-compose up -d
-```
-
-이 명령은 PostgreSQL과 Redis 컨테이너를 실행합니다.
-
-### 3. 애플리케이션 실행
-
-```bash
-cd backend
-./gradlew :service-a-identity:bootRun
-```
-
-또는
-
-```bash
-cd backend/service-a-identity
-./gradlew bootRun
-```
-
-### 4. 환경 변수 설정
-
-개발 환경에서는 `.env` 파일을 사용하거나 환경 변수를 직접 설정합니다:
-
-```bash
-export DB_URL_A=jdbc:postgresql://localhost:5432/identity_dev
-export DB_USER=postgres
-export DB_PASS=postgres
-export REDIS_HOST=localhost
-export REDIS_PORT=6379
-export IP_HASH_PEPPER=dev-pepper-key
-export SESSION_SECRET=dev-session-secret
-export CSRF_SECRET=dev-csrf-secret
-export SPRING_PROFILES_ACTIVE=dev
-```
-
-## 빌드 및 실행
-
-### 빌드
+### Gradle 빌드
 
 ```bash
 cd backend
@@ -159,11 +116,20 @@ cd backend/service-a-identity
 docker build -t internos-service-a:latest .
 ```
 
-### Docker Compose로 전체 스택 실행
+### Docker로 애플리케이션 실행
 
 ```bash
-cd backend/docker
-docker-compose up -d
+docker run -p 8080:8080 \
+  -e DB_URL_A=jdbc:postgresql://<host>:5432/identity_dev \
+  -e DB_USER=postgres \
+  -e DB_PASS=postgres \
+  -e REDIS_HOST=<host> \
+  -e REDIS_PORT=6379 \
+  -e IP_HASH_PEPPER=your-pepper \
+  -e SESSION_SECRET=your-secret \
+  -e CSRF_SECRET=your-csrf-secret \
+  -e SPRING_PROFILES_ACTIVE=dev \
+  internos-service-a:latest
 ```
 
 ## API 문서
