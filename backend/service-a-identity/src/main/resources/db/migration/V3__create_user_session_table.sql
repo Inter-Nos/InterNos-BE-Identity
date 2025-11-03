@@ -15,7 +15,7 @@ CREATE INDEX idx_user_session_expires_at ON user_session(expires_at);
 CREATE INDEX idx_user_session_fingerprint ON user_session(session_fingerprint);
 
 -- Add comment
-COMMENT ON TABLE user_session IS 'Active user sessions stored in Redis but tracked in DB';
-COMMENT ON COLUMN user_session.session_fingerprint IS 'Session fingerprint for Redis lookup';
+COMMENT ON TABLE user_session IS 'Active user sessions tracked in DB';
+COMMENT ON COLUMN user_session.session_fingerprint IS 'Session fingerprint for lookup';
 COMMENT ON COLUMN user_session.ip_hash IS 'Hashed IP address with pepper';
 
