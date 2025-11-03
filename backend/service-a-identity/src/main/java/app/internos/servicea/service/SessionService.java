@@ -29,7 +29,7 @@ public class SessionService {
     
     /**
      * Create a new session for the user
-     * Store session in Redis via HttpSession and track in DB
+     * Store session in HttpSession (Spring Security default) and track in DB
      */
     @Transactional
     public void createSession(HttpServletRequest request, AppUser user) {
@@ -43,7 +43,7 @@ public class SessionService {
         String clientIp = getClientIp(request);
         String ipHash = ipHashUtil.hashIp(clientIp);
         
-        // Store user info in session (Redis)
+        // Store user info in session
         session.setAttribute(SESSION_USER_ID_ATTR, user.getId());
         session.setAttribute(SESSION_USERNAME_ATTR, user.getUsername());
         session.setAttribute(SESSION_FINGERPRINT_ATTR, sessionFingerprint);
@@ -87,7 +87,7 @@ public class SessionService {
     
     /**
      * Invalidate session
-     * Remove from Redis and mark as expired in DB
+     * Remove session and mark as expired in DB
      */
     @Transactional
     public void invalidateSession(HttpServletRequest request) {
@@ -98,7 +98,7 @@ public class SessionService {
         
         String sessionFingerprint = (String) session.getAttribute(SESSION_FINGERPRINT_ATTR);
         
-        // Invalidate Redis session
+        // Invalidate session
         session.invalidate();
         
         // Remove from DB
