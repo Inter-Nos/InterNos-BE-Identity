@@ -14,9 +14,7 @@ Service A는 사용자 인증, 세션 관리, CSRF 보안, 대시보드 데이�
 - **Spring Boot 3.2.0**
 - **Spring Security** - 인증/인가
 - **Spring Data JPA** - 데이터베이스 접근
-- **Spring Session Data Redis** - 세션 관리
 - **PostgreSQL 15** - 데이터베이스
-- **Redis** - 세션 및 캐시 저장소
 - **Flyway** - 데이터베이스 마이그레이션
 - **Gradle** - 빌드 도구
 - **Docker** - 컨테이너화
@@ -30,7 +28,7 @@ backend/
 ├── service-a-identity/        # Service A - Identity & Portal
 │   ├── src/main/java/
 │   │   └── app/internos/servicea/
-│   │       ├── config/        # 설정 (Security, Redis, OpenAPI)
+│   │       ├── config/        # 설정 (Security, OpenAPI)
 │   │       ├── controller/    # REST 컨트롤러
 │   │       ├── domain/        # 엔티티 및 리포지토리
 │   │       ├── dto/           # 요청/응답 DTO
@@ -75,11 +73,6 @@ DB_URL_A=jdbc:postgresql://localhost:5432/identity_dev
 DB_USER=postgres
 DB_PASS=postgres
 
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
-
 # 보안
 SESSION_SECRET=your-session-secret-key
 CSRF_SECRET=your-csrf-secret-key
@@ -123,8 +116,6 @@ docker run -p 8080:8080 \
   -e DB_URL_A=jdbc:postgresql://<host>:5432/identity_dev \
   -e DB_USER=postgres \
   -e DB_PASS=postgres \
-  -e REDIS_HOST=<host> \
-  -e REDIS_PORT=6379 \
   -e IP_HASH_PEPPER=your-pepper \
   -e SESSION_SECRET=your-secret \
   -e CSRF_SECRET=your-csrf-secret \
@@ -172,7 +163,7 @@ Double Submit Cookie 패턴을 사용합니다:
 
 ### 세션 관리
 
-- Redis를 통한 분산 세션 관리
+- Spring Security 기본 세션 관리
 - HTTP-only 쿠키 (`SESSION`)
 - 24시간 유효기간
 
@@ -250,12 +241,6 @@ refactor: improve authentication service
 1. PostgreSQL이 실행 중인지 확인
 2. `DB_URL_A`, `DB_USER`, `DB_PASS` 환경 변수 확인
 3. 포트 5432가 열려있는지 확인
-
-### Redis 연결 실패
-
-1. Redis가 실행 중인지 확인
-2. `REDIS_HOST`, `REDIS_PORT` 환경 변수 확인
-3. 포트 6379가 열려있는지 확인
 
 ### CSRF 토큰 오류
 
